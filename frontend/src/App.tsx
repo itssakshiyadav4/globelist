@@ -1,14 +1,19 @@
+import { Routes, Route } from 'react-router'
 import Navbar from './components/Navbar'
+import Home from './pages/Home'
+import Trips from './pages/Trips'
+import Login from './pages/Login'
 
 function App() {
   return (
     <div className="min-h-screen bg-sky-50">
       <Navbar />
       <main className="mx-auto max-w-5xl p-4">
-        <h1 className="text-2xl font-bold text-gray-800 md:text-4xl">
-          Welcome to GLOBElist
-        </h1>
-        <p className="mt-2 text-gray-600">Plan. Organize. Track. Remember.</p>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/trips" element={<Trips />} />
+          <Route path="/login" element={<Login />} />
+        </Routes> 
       </main>
     </div>
   )
