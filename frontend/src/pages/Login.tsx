@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { setUser } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -26,6 +28,7 @@ export default function Login() {
         return
       }
 
+      setUser(data)
       navigate('/trips')
     } catch {
       setError('Could not reach the server')
