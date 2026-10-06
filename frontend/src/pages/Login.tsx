@@ -1,12 +1,37 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
 
 export default function Login() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    console.log('Login attempt:', { email })
+    setError('')
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error ?? 'Login failed')
+        return
+      }
+
+      navigate('/trips')
+    } catch {
+      setError('Could not reach the server')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -43,11 +68,16 @@ export default function Login() {
           />
         </div>
 
+        {error && (
+          <p className="rounded-lg bg-red-50 p-2 text-sm text-red-600">{error}</p>
+        )}
+
         <button
           type="submit"
-          className="w-full rounded-lg bg-sky-600 py-2 font-semibold text-white hover:bg-sky-700"
+          disabled={loading}
+          className="w-full rounded-lg bg-sky-600 py-2 font-semibold text-white hover:bg-sky-700 disabled:opacity-60"
         >
-          Log in
+          {loading ? 'Logging in...' : 'Log in'}
         </button>
       </form>
     </div>
