@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma'
+import { requireAuth } from '../middleware/requireAuth'
 
 const router = Router()
 
@@ -81,6 +82,31 @@ router.post('/login', async (req, res) => {
     console.error('Login failed:', err)
     return res.status(500).json({ error: 'Something went wrong' })
   }
+})
+
+router.get('/me', requireAuth, async (_req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: res.locals.userId },
+      select: { id: true, name: true, email: true, createdAt: true },
+    })
+    if (!user) {
+      return res.status(401).json({ error: 'Not logged in' })
+    }
+    return res.json(user)
+  } catch (err) {
+    console.error('Me failed:', err)
+    return res.status(500).json({ error: 'Something went wrong' })
+  }
+})
+
+router.post('/logout', (_req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  })
+  return res.json({ message: 'Logged out' })
 })
 
 export default router

@@ -1,10 +1,12 @@
 import express from 'express'
+import cookieParser from 'cookie-parser'
 import authRouter from './routes/auth'
 
 const app = express()
 const PORT = 3000
 
 app.use(express.json())
+app.use(cookieParser())
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', message: 'GLOBElist backend is running' })
