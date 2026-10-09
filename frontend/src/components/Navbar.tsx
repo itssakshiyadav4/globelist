@@ -11,9 +11,9 @@ export default function Navbar() {
   }
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="sticky top-0 z-10 bg-white/80 shadow-sm backdrop-blur-md">
       <nav className="mx-auto flex max-w-5xl items-center justify-between p-4">
-        <Link to="/" className="text-xl font-bold text-brand-600">
+        <Link to="/" className="text-xl font-bold text-brand-700">
           GLOBElist 🌍
         </Link>
         <div className="flex items-center gap-4 text-sm text-gray-600 md:gap-8 md:text-base">
