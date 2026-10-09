@@ -26,6 +26,7 @@ export default function Trips() {
   const [trips, setTrips] = useState<Trip[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
+  const [actionError, setActionError] = useState('')
 
   const [title, setTitle] = useState('')
   const [destination, setDestination] = useState('')
@@ -77,6 +78,22 @@ export default function Trips() {
       setFormError('Could not reach the server')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!window.confirm('Delete this trip? This cannot be undone.')) return
+    setActionError('')
+
+    try {
+      const res = await fetch(`/api/trips/${id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        setActionError('Could not delete the trip')
+        return
+      }
+      setTrips((prev) => prev.filter((t) => t.id !== id))
+    } catch {
+      setActionError('Could not reach the server')
     }
   }
 
@@ -186,6 +203,10 @@ export default function Trips() {
           <p className="rounded-lg bg-red-50 p-3 text-red-600">{loadError}</p>
         )}
 
+        {actionError && (
+          <p className="mb-4 rounded-lg bg-red-50 p-3 text-red-600">{actionError}</p>
+        )}
+
         {!loading && !loadError && trips.length === 0 && (
           <div className="rounded-2xl border-2 border-dashed border-brand-200 p-8 text-center text-gray-500">
             No trips yet. Add your first one above ✈️
@@ -201,6 +222,15 @@ export default function Trips() {
                 {formatDate(trip.startDate)} → {formatDate(trip.endDate)}
               </p>
               {trip.notes && <p className="mt-3 text-gray-600">{trip.notes}</p>}
+
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={() => handleDelete(trip.id)}
+                  className="rounded-full border border-red-200 px-4 py-1 text-sm font-medium text-red-600 hover:bg-red-50"
+                >
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>
