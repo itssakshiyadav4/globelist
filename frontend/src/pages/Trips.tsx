@@ -28,6 +28,7 @@ export default function Trips() {
   const [loadError, setLoadError] = useState('')
   const [actionError, setActionError] = useState('')
 
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [destination, setDestination] = useState('')
   const [startDate, setStartDate] = useState('')
@@ -44,22 +45,41 @@ export default function Trips() {
       .finally(() => setLoading(false))
   }, [])
 
+  function resetForm() {
+    setEditingId(null)
+    setTitle('')
+    setDestination('')
+    setStartDate('')
+    setEndDate('')
+    setNotes('')
+    setFormError('')
+  }
+
+  function handleEdit(trip: Trip) {
+    setEditingId(trip.id)
+    setTitle(trip.title)
+    setDestination(trip.destination)
+    setStartDate(trip.startDate.slice(0, 10))
+    setEndDate(trip.endDate.slice(0, 10))
+    setNotes(trip.notes ?? '')
+    setFormError('')
+    setActionError('')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setFormError('')
     setSaving(true)
 
+    const url = editingId ? `/api/trips/${editingId}` : '/api/trips'
+    const method = editingId ? 'PUT' : 'POST'
+
     try {
-      const res = await fetch('/api/trips', {
-        method: 'POST',
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          destination,
-          startDate,
-          endDate,
-          notes: notes || undefined,
-        }),
+        body: JSON.stringify({ title, destination, startDate, endDate, notes }),
       })
       const data = await res.json()
 
@@ -68,12 +88,12 @@ export default function Trips() {
         return
       }
 
-      setTrips((prev) => sortByStart([...prev, data]))
-      setTitle('')
-      setDestination('')
-      setStartDate('')
-      setEndDate('')
-      setNotes('')
+      if (editingId) {
+        setTrips((prev) => sortByStart(prev.map((t) => (t.id === editingId ? data : t))))
+      } else {
+        setTrips((prev) => sortByStart([...prev, data]))
+      }
+      resetForm()
     } catch {
       setFormError('Could not reach the server')
     } finally {
@@ -92,6 +112,7 @@ export default function Trips() {
         return
       }
       setTrips((prev) => prev.filter((t) => t.id !== id))
+      if (editingId === id) resetForm()
     } catch {
       setActionError('Could not reach the server')
     }
@@ -108,7 +129,9 @@ export default function Trips() {
         onSubmit={handleSubmit}
         className="mt-6 rounded-2xl bg-white p-6 shadow-md"
       >
-        <h2 className="text-lg font-semibold text-gray-800">Plan a new trip</h2>
+        <h2 className="text-lg font-semibold text-gray-800">
+          {editingId ? 'Edit trip' : 'Plan a new trip'}
+        </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
@@ -187,13 +210,25 @@ export default function Trips() {
           <p className="mt-4 rounded-lg bg-red-50 p-2 text-sm text-red-600">{formError}</p>
         )}
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="mt-4 rounded-full bg-brand-600 px-6 py-2 font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
-        >
-          {saving ? 'Saving...' : 'Add trip'}
-        </button>
+        <div className="mt-4 flex gap-3">
+          <button
+            type="submit"
+            disabled={saving}
+            className="rounded-full bg-brand-600 px-6 py-2 font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
+          >
+            {saving ? 'Saving...' : editingId ? 'Save changes' : 'Add trip'}
+          </button>
+
+          {editingId && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="rounded-full border border-gray-300 px-6 py-2 font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
 
       <div className="mt-8">
@@ -223,7 +258,13 @@ export default function Trips() {
               </p>
               {trip.notes && <p className="mt-3 text-gray-600">{trip.notes}</p>}
 
-              <div className="mt-4 flex justify-end">
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  onClick={() => handleEdit(trip)}
+                  className="rounded-full border border-brand-200 px-4 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50"
+                >
+                  Edit
+                </button>
                 <button
                   onClick={() => handleDelete(trip.id)}
                   className="rounded-full border border-red-200 px-4 py-1 text-sm font-medium text-red-600 hover:bg-red-50"
