@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Trips from './pages/Trips'
+import TripDetail from './pages/TripDetail'
 import Login from './pages/Login'
 import Register from './pages/Register'
 
@@ -28,6 +29,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Trips />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/trips/:id"
+              element={
+                <ProtectedRoute>
+                  <TripDetail />
                 </ProtectedRoute>
               }
             />

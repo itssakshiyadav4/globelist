@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
 
 type Trip = {
   id: string
@@ -258,7 +259,13 @@ export default function Trips() {
               </p>
               {trip.notes && <p className="mt-3 text-gray-600">{trip.notes}</p>}
 
-              <div className="mt-4 flex justify-end gap-2">
+              <div className="mt-4 flex flex-wrap justify-end gap-2">
+                <Link
+                  to={`/trips/${trip.id}`}
+                  className="rounded-full bg-brand-600 px-4 py-1 text-sm font-medium text-white hover:bg-brand-700"
+                >
+                  Itinerary
+                </Link>
                 <button
                   onClick={() => handleEdit(trip)}
                   className="rounded-full border border-brand-200 px-4 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50"
