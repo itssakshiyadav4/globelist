@@ -5,6 +5,7 @@ import tripsRouter from './routes/trips'
 import itineraryRouter from './routes/itinerary'
 import expensesRouter from './routes/expenses'
 import budgetRouter from './routes/budget'
+import dashboardRouter from './routes/dashboard'
 
 const app = express()
 const PORT = 3000
@@ -17,6 +18,7 @@ app.get('/api/health', (_req, res) => {
 })
 
 app.use('/api/auth', authRouter)
+app.use('/api/dashboard', dashboardRouter)
 app.use('/api/trips/:tripId/items', itineraryRouter)
 app.use('/api/trips/:tripId/expenses', expensesRouter)
 app.use('/api/trips/:tripId/budget', budgetRouter)
