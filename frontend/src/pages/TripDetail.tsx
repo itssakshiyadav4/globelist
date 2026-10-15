@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
+import BudgetSection from '../components/BudgetSection'
 
 type Trip = {
   id: string
@@ -364,6 +365,10 @@ export default function TripDetail() {
             )
           })}
         </div>
+      </div>
+
+      <div className="mt-10">
+        <BudgetSection tripId={trip.id} />
       </div>
     </div>
   )
