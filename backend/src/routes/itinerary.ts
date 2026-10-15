@@ -29,7 +29,7 @@ function outsideTrip(date: Date, trip: { startDate: Date; endDate: Date }) {
 
 router.get('/', async (req, res) => {
   try {
-    const trip = await findOwnedTrip(String(req.params.tripId), res.locals.userId)
+    const trip = await findOwnedTrip(String((req.params as Record<string, string>).tripId), res.locals.userId)
     if (!trip) {
       return res.status(404).json({ error: 'Trip not found' })
     }
@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const trip = await findOwnedTrip(String(req.params.tripId), res.locals.userId)
+    const trip = await findOwnedTrip(String((req.params as Record<string, string>).tripId), res.locals.userId)
     if (!trip) {
       return res.status(404).json({ error: 'Trip not found' })
     }
@@ -77,7 +77,7 @@ router.put('/:itemId', async (req, res) => {
   }
 
   try {
-    const trip = await findOwnedTrip(String(req.params.tripId), res.locals.userId)
+    const trip = await findOwnedTrip(String((req.params as Record<string, string>).tripId), res.locals.userId)
     if (!trip) {
       return res.status(404).json({ error: 'Trip not found' })
     }
@@ -113,7 +113,7 @@ router.put('/:itemId', async (req, res) => {
 
 router.delete('/:itemId', async (req, res) => {
   try {
-    const trip = await findOwnedTrip(String(req.params.tripId), res.locals.userId)
+    const trip = await findOwnedTrip(String((req.params as Record<string, string>).tripId), res.locals.userId)
     if (!trip) {
       return res.status(404).json({ error: 'Trip not found' })
     }
