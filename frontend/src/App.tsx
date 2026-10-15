@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
+import Dashboard from './pages/Dashboard'
 import Trips from './pages/Trips'
 import TripDetail from './pages/TripDetail'
 import Login from './pages/Login'
@@ -24,6 +25,14 @@ function App() {
         >
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/trips"
               element={

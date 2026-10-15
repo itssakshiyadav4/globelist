@@ -16,11 +16,14 @@ export default function Navbar() {
         <Link to="/" className="text-xl font-bold text-brand-700">
           GLOBElist 🌍
         </Link>
-        <div className="flex items-center gap-4 text-sm text-gray-600 md:gap-8 md:text-base">
+        <div className="flex items-center gap-3 text-sm text-gray-600 md:gap-8 md:text-base">
+          {!loading && user && (
+            <Link to="/dashboard" className="hover:text-brand-600">Dashboard</Link>
+          )}
           <Link to="/trips" className="hover:text-brand-600">Trips</Link>
           {!loading && user && (
             <>
-              <span className="font-medium text-gray-800">{user.name}</span>
+              <span className="hidden font-medium text-gray-800 sm:inline">{user.name}</span>
               <button onClick={handleLogout} className="hover:text-brand-600">
                 Logout
               </button>
